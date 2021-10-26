@@ -23,6 +23,9 @@ public class User implements UserDetails {
     private String userface;
     private Timestamp regTime;
 
+    public User(String username){
+        this.username=username;
+    }
     public Timestamp getRegTime() {
         return regTime;
     }
@@ -63,6 +66,7 @@ public class User implements UserDetails {
         this.id = id;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -109,6 +113,7 @@ public class User implements UserDetails {
     }
 
 
+    @Override
     public String getPassword() {
         return password;
     }

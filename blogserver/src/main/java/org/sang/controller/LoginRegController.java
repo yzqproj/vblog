@@ -1,12 +1,21 @@
 package org.sang.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.sang.bean.RespBean;
 import org.sang.bean.User;
 import org.sang.service.UserService;
+import org.sang.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sang on 2017/12/17.
@@ -37,6 +46,22 @@ public class LoginRegController {
     @RequestMapping("/login_page")
     public RespBean loginPage() {
         return new RespBean("error", "尚未登录，请登录!");
+    }
+
+    @PostMapping("/login")
+    public HashMap<String,Object> loginPost(String username, String password) {
+        if (StrUtil.isNotEmpty(username) && StrUtil.isNotEmpty(password)) {
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>(
+                    new User(username));
+            UserDetails adminUser = userService.loadUserByUsername(username);
+            String token = JwtUtil.sign(username, String.valueOf(adminUser.getAuthorities()));
+            HashMap<String,Object> res=new HashMap<>(1);
+            res.put("token",token);
+            return res;
+        } else {
+            return null;
+        }
+
     }
 
     @PostMapping("/reg")
